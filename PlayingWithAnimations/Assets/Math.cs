@@ -21,32 +21,47 @@ public class Math : MonoBehaviour {
 
     public Vector3 spawn;
 
+    public float Impulso;
+
+    public Vector3 ShootPosition;
+    public Vector3 LimitesStartPosition;
+    public Transform Limites;
+
     // Use this for initialization
     void Start () {
 
         spawn = transform.position;
-
-	}
+        ShootPosition = new Vector3(0, 0, 0);
+        LimitesStartPosition = Limites.position;
+    }
 	
 	// Update is called once per frame
 	void Update () {
         //Debug.DrawRay(transform.position, arribaDerecha.position - transform.position, Color.red);
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        Debug.DrawRay(transform.position, Limites.position - transform.position, Color.black);
+
+        if (Input.GetAxis("HJ") > 0)
         {
             ejeX.value += 2;
+            ShootPosition.x += 0.1f;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetAxis("HJ") < 0)
         {
             ejeX.value -= 2;
+            ShootPosition.x -= 0.1f;
+
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetAxis("VJ") < 0)
         {
             ejeY.value += 2;
+            ShootPosition.y -= 0.05f;
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+
+        if (Input.GetAxis("VJ") > 0)
         {
             ejeY.value -= 2;
+            ShootPosition.y += 0.05f;
         }
 
         if (Input.GetKeyDown(KeyCode.R))
@@ -55,63 +70,69 @@ public class Math : MonoBehaviour {
             transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
             ejeX.value = 0;
             ejeY.value = 0;
+            ShootPosition = Vector3.zero;
+            Limites.position = LimitesStartPosition;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetButtonDown("XJ"))
         {
-            #region Arriba...
-            if(ejeX.value > 80 && ejeY.value < -80)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((arribaDerecha.position - transform.position) * 100F);
-            }
+            Limites.position += ShootPosition;
 
-            if (ejeX.value < -80 && ejeY.value < -80)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((arribaIzquierda.position - transform.position) * 100F);
-            }
+            transform.GetComponent<Rigidbody>().AddForce((Limites.position - transform.position) * Impulso, ForceMode.Impulse);
 
-            if (ejeX.value == 0 && ejeY.value < -80)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((arribaMedio.position - transform.position) * 100F);
-            }
-            #endregion
+            //#region Arriba...
+            //if (ejeX.value > 80 && ejeY.value < -80)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((arribaDerecha.position - transform.position) * Impulso,ForceMode.Impulse);
+            //}
 
-            #region Medio...
+            //if (ejeX.value <= -80 && ejeY.value <= -80)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((arribaIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
 
-            if ((ejeX.value < 20 && ejeX.value > -20) && (ejeY.value < 20 && ejeY.value > -20))
-            {
-                transform.GetComponent<Rigidbody>().AddForce((MedioMedio.position - transform.position) * 100F);
-            }
+            //if (ejeX.value == 0 && ejeY.value < -80)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((arribaMedio.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
+            //#endregion
 
-            if ((ejeX.value > 20) && (ejeY.value < 20 && ejeY.value > -20))
-            {
-                transform.GetComponent<Rigidbody>().AddForce((MedioDerecha.position - transform.position) * 100F);
-            }
+            //#region Medio...
 
-            if ((ejeX.value < -20) && (ejeY.value < 20 && ejeY.value > -20))
-            {
-                transform.GetComponent<Rigidbody>().AddForce((MedioIzquierda.position - transform.position) * 100F);
-            }
+            //if ((ejeX.value < 20 && ejeX.value > -20) && (ejeY.value < 20 && ejeY.value > -20))
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((MedioMedio.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
 
-            #endregion
+            //if ((ejeX.value > 20) && (ejeY.value < 20 && ejeY.value > -20))
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((MedioDerecha.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
+
+            //if ((ejeX.value < -20) && (ejeY.value < 20 && ejeY.value > -20))
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((MedioIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
+
+            //#endregion
 
 
-            #region Abajo...
-            if (ejeX.value > 80 && ejeY.value > 20)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((AbajoDerecha.position - transform.position) * 100F);
-            }
+            //#region Abajo...
+            //if (ejeX.value > 80 && ejeY.value > 20)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((AbajoDerecha.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
 
-            if (ejeX.value < -80 && ejeY.value > 20)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((AbajoIzquierda.position - transform.position) * 100F);
-            }
+            //if (ejeX.value < -80 && ejeY.value > 20)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((AbajoIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
 
-            if (ejeX.value == 0 && ejeY.value > 20)
-            {
-                transform.GetComponent<Rigidbody>().AddForce((AbajoMedio.position - transform.position) * 100F);
-            }
-            #endregion
+            //if (ejeX.value == 0 && ejeY.value > 20)
+            //{
+            //    transform.GetComponent<Rigidbody>().AddForce((AbajoMedio.position - transform.position) * Impulso, ForceMode.Impulse);
+            //}
+            //#endregion
         }
     }
 }
