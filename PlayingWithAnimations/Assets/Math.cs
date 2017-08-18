@@ -6,133 +6,111 @@ using UnityEngine.UI; // Required when Using UI elements
 [ExecuteInEditMode]
 public class Math : MonoBehaviour {
 
-    public Transform arribaDerecha;
-    public Transform arribaIzquierda;
-    public Transform arribaMedio;
-    public Transform MedioDerecha;
-    public Transform MedioIzquierda;
-    public Transform MedioMedio;
-    public Transform AbajoDerecha;
-    public Transform AbajoIzquierda;
-    public Transform AbajoMedio;
-
     public Slider ejeX;
     public Slider ejeY;
+    public float sensitivityY = 0.01f;
+    public float sensitivityX = 0.04f;
 
-    public Vector3 spawn;
+    public Vector3 spawnPosition;
 
     public float Impulso;
 
+    public bool Shoot;
+    public bool Restart;
+
     public Vector3 ShootPosition;
-    public Vector3 LimitesStartPosition;
-    public Transform Limites;
+    public Vector3 ShootDirectionSpawnPosition;
+    public Transform ShootDirection;
+
+    private IEnumerator coroutine;
 
     // Use this for initialization
     void Start () {
 
-        spawn = transform.position;
+        spawnPosition = transform.position;
         ShootPosition = new Vector3(0, 0, 0);
-        LimitesStartPosition = Limites.position;
+        ShootDirectionSpawnPosition = ShootDirection.position;
+        Shoot = false;
+        Restart = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        //Debug.DrawRay(transform.position, arribaDerecha.position - transform.position, Color.red);
 
-        Debug.DrawRay(transform.position, Limites.position - transform.position, Color.black);
+        ShootPosition = Vector3.zero;
 
-        if (Input.GetAxis("HJ") > 0)
+        if (Input.GetAxisRaw("HJ") == 1)
         {
             ejeX.value += 2;
-            ShootPosition.x += 0.1f;
+            ShootPosition.x += sensitivityX;
+            if (ShootPosition.x > 0)
+                ShootDirection.position += ShootPosition;
+            else
+                ShootDirection.position -= ShootPosition;
         }
-        if (Input.GetAxis("HJ") < 0)
+
+        if (Input.GetAxisRaw("HJ") == -1)
         {
             ejeX.value -= 2;
-            ShootPosition.x -= 0.1f;
-
+            ShootPosition.x -= sensitivityX;
+            if(ShootPosition.x > 0)
+                ShootDirection.position -= ShootPosition;
+            else
+                ShootDirection.position += ShootPosition;
         }
-        if (Input.GetAxis("VJ") < 0)
+               
+
+        if (Input.GetAxisRaw("VJ") == -1)
         {
             ejeY.value += 2;
-            ShootPosition.y -= 0.05f;
+            ShootPosition.y -= sensitivityY;
+            if (ShootPosition.y > 0)
+                ShootDirection.position -= ShootPosition;
+            else
+                ShootDirection.position += ShootPosition;
         }
 
-        if (Input.GetAxis("VJ") > 0)
+        if (Input.GetAxisRaw("VJ") ==  1)
         {
             ejeY.value -= 2;
-            ShootPosition.y += 0.05f;
+            ShootPosition.y += sensitivityY;
+            if (ShootPosition.y > 0)
+                ShootDirection.position += ShootPosition;
+            else
+                ShootDirection.position -= ShootPosition;
         }
+
+        Debug.DrawRay(transform.position, ShootDirection.position - transform.position, Color.black);
+
+        
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            transform.position = spawn;
+            transform.position = spawnPosition;
             transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
             ejeX.value = 0;
             ejeY.value = 0;
             ShootPosition = Vector3.zero;
-            Limites.position = LimitesStartPosition;
+            ShootDirection.position = ShootDirectionSpawnPosition;
+            Shoot = false;
+            Restart = true;
         }
 
         if (Input.GetButtonDown("XJ"))
         {
-            Limites.position += ShootPosition;
+            Shoot = true;
+            StartCoroutine(WaitAndShoot(0.3f));            
+        }
+    }
 
-            transform.GetComponent<Rigidbody>().AddForce((Limites.position - transform.position) * Impulso, ForceMode.Impulse);
+    private IEnumerator WaitAndShoot(float waitTime)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(waitTime);
+            //transform.GetComponent<Rigidbody>().AddForce((ShootDirection.position - transform.position) * Impulso, ForceMode.Impulse);
 
-            //#region Arriba...
-            //if (ejeX.value > 80 && ejeY.value < -80)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((arribaDerecha.position - transform.position) * Impulso,ForceMode.Impulse);
-            //}
-
-            //if (ejeX.value <= -80 && ejeY.value <= -80)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((arribaIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //if (ejeX.value == 0 && ejeY.value < -80)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((arribaMedio.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-            //#endregion
-
-            //#region Medio...
-
-            //if ((ejeX.value < 20 && ejeX.value > -20) && (ejeY.value < 20 && ejeY.value > -20))
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((MedioMedio.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //if ((ejeX.value > 20) && (ejeY.value < 20 && ejeY.value > -20))
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((MedioDerecha.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //if ((ejeX.value < -20) && (ejeY.value < 20 && ejeY.value > -20))
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((MedioIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //#endregion
-
-
-            //#region Abajo...
-            //if (ejeX.value > 80 && ejeY.value > 20)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((AbajoDerecha.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //if (ejeX.value < -80 && ejeY.value > 20)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((AbajoIzquierda.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-
-            //if (ejeX.value == 0 && ejeY.value > 20)
-            //{
-            //    transform.GetComponent<Rigidbody>().AddForce((AbajoMedio.position - transform.position) * Impulso, ForceMode.Impulse);
-            //}
-            //#endregion
+            transform.GetComponent<Rigidbody>().AddForce(ShootDirection.position, ForceMode.Impulse);
         }
     }
 }
