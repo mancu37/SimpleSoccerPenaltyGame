@@ -24,6 +24,8 @@ public class Math : MonoBehaviour {
 
     private IEnumerator coroutine;
 
+    public Text text;
+
     // Use this for initialization
     void Start () {
 
@@ -33,9 +35,13 @@ public class Math : MonoBehaviour {
         Shoot = false;
         Restart = false;
     }
-	
+
+    float count = 0f;
+
 	// Update is called once per frame
 	void Update () {
+
+        var crono = Time.time;
 
         ShootPosition = Vector3.zero;
 
@@ -96,10 +102,13 @@ public class Math : MonoBehaviour {
             Restart = true;
         }
 
-        if (Input.GetButtonDown("XJ"))
+        if (Input.GetButtonDown("XJ") && !Shoot)
         {
+            text.text = "Disparo!!!"; 
+            Debug.Log("Entro!");
             Shoot = true;
-            StartCoroutine(WaitAndShoot(0.3f));            
+            StartCoroutine(WaitAndShoot(0.3f));
+                 
         }
     }
 
@@ -108,8 +117,11 @@ public class Math : MonoBehaviour {
         while (true)
         {
             yield return new WaitForSeconds(waitTime);
+            StopAllCoroutines();
             //transform.GetComponent<Rigidbody>().AddForce((ShootDirection.position - transform.position) * Impulso, ForceMode.Impulse);
-
+            Debug.Log("Impulso!");
+            //transform.GetComponent<Rigidbody>().AddForce(ShootDirection.position, ForceMode.Impulse);
+            ShootDirection.position.Normalize();
             transform.GetComponent<Rigidbody>().AddForce(ShootDirection.position, ForceMode.Impulse);
         }
     }

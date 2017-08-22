@@ -36,7 +36,7 @@ public class ArqueroController : MonoBehaviour {
     void Start () {
         anim = transform.GetComponent<Animator>();
         col = transform.GetComponent<CapsuleCollider>();
-        bot = true;
+        bot = false;
         jugador = GameObject.Find("Pelota").GetComponent<Math>();
     }
 	
@@ -44,7 +44,7 @@ public class ArqueroController : MonoBehaviour {
 	void FixedUpdate () {
 
         var crono = Time.time;
-        text.text = System.Math.Ceiling(crono).ToString();
+        //text.text = System.Math.Ceiling(crono).ToString();
         
         currentBaseState = anim.GetCurrentAnimatorStateInfo(0);
 
@@ -299,6 +299,33 @@ public class ArqueroController : MonoBehaviour {
 
 
         
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(collision.gameObject.name);
+        if(collision.gameObject.name == "Pelota")
+        {
+            //collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            //collision.gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            //collision.gameObject.GetComponent<Rigidbody>().AddForce(0f, 0f,0f, ForceMode.Impulse);
+            //collision.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+
+            collision.gameObject.GetComponent<Rigidbody>().AddForce(-collision.gameObject.GetComponent<Rigidbody>().velocity * collision.gameObject.GetComponent<Rigidbody>().mass, ForceMode.Impulse);
+
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.name == "Pelota")
+        {
+            //collision.gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            //collision.gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            //collision.gameObject.GetComponent<Rigidbody>().AddForce(0f, 0f, 0f, ForceMode.Impulse);
+            collision.gameObject.GetComponent<Rigidbody>().AddForce(-collision.gameObject.GetComponent<Rigidbody>().velocity * collision.gameObject.GetComponent<Rigidbody>().mass, ForceMode.Impulse);
+        }
     }
 
     void Update()

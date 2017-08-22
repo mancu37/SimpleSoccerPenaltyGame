@@ -12,14 +12,13 @@ public class CheckCollision : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (!other.name.Contains("Plane"))
-        //{
-        //    Debug.LogFormat("Collider: {0}", other.name);
+        if (other.gameObject.name == "Pelota")
+        {
+            Debug.Log("Pego en la Red!!!");
 
-        //    //pelota.GetComponent<Rigidbody>().AddForce((pelota.position - transform.position) * fuerza);
-
-        //    pelota.GetComponent<Rigidbody>().AddForce(transform.TransformDirection(Vector3.forward) * fuerza);
-        //}
+            other.GetComponent<Rigidbody>().AddForce(-other.GetComponent<Rigidbody>().velocity * other.GetComponent<Rigidbody>().mass, ForceMode.Impulse);
+            //other.GetComponent<Rigidbody>().isKinematic = true;
+        }
     }
 
     private void Update()
